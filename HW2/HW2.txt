@@ -1,77 +1,63 @@
 --ДОМАШНЕЕ ЗАДАНИЕ УРОКА №2 
 
---1. Все товары, в которых в название есть пометка urgent или название начинается с Animal
+--1. 
 SELECT 
-      [StockItemName]  
-  FROM [WideWorldImporters].[Warehouse].[StockItems_Archive]
-  WHERE (([StockItemName] LIKE '%urgent%')
-  OR ([StockItemName]  LIKE 'Animal%'))
-  order by [StockItemName] ;
+	[StockItemName]  
+	FROM [WideWorldImporters].[Warehouse].[StockItems] 
+	WHERE [StockItemName] LIKE '%urgent%' OR [StockItemName]  LIKE 'Animal%'
+	order by [StockItemName];
 
+--2.
+	SELECT 
+	[SupplierName],
+	[Description]
+	FROM [WideWorldImporters].[Purchasing].[Suppliers] a
+    LEFT JOIN [WideWorldImporters].[Warehouse].[StockItems] b	ON a.[SupplierID]  = b.[SupplierID]
+	LEFT JOIN [WideWorldImporters].[Sales].[OrderLines] c		ON b.[StockItemID] = c.[StockItemID]
+	WHERE c.[Description] IS NULL
+	ORDER BY [SupplierName];
 
---2. Поставщиков, у которых не было сделано ни одного заказа (потом покажем как это делать через подзапрос, сейчас сделайте через JOIN)
-  	  SELECT 
+-- 3. 
+	SELECT 
+      [InvoiceDate],
+	  DATENAME(MONTH, ([InvoiceDate])) as [МЕСЯЦ],
+	  DATEPART (QUARTER, ([InvoiceDate])) AS [КВАРТАЛ],
+	  (MONTH ([InvoiceDate] -1)/4+1) AS [ТРЕТЬ]
+	FROM [WideWorldImporters].[Sales].[Invoices] INV
+	LEFT JOIN [WideWorldImporters].[Sales].[OrderLines] ORL	ON INV.OrderID = ORL.OrderID
+	WHERE UnitPrice > 100 OR Quantity > 20
+	ORDER BY [МЕСЯЦ], [КВАРТАЛ], [ТРЕТЬ]
+	OFFSET 1000 ROWS FETCH FIRST 100 ROWS ONLY;
+	
+--4.   	 
+  SELECT DISTINCT
+	  A.[SupplierReference],
 	  [SupplierName],
-	  [Description]
-  FROM [WideWorldImporters].[Purchasing].[Suppliers]
-    LEFT JOIN [WideWorldImporters].[Warehouse].[StockItems]
-	ON [WideWorldImporters].[Purchasing].[Suppliers].[SupplierID]  = [WideWorldImporters].[Warehouse].[StockItems].[SupplierID]
-
-	LEFT JOIN [WideWorldImporters].[Sales].[OrderLines]
-	ON [WideWorldImporters].[Warehouse].[StockItems].[StockItemID] = [WideWorldImporters].[Sales].[OrderLines].[StockItemID]
-	WHERE [WideWorldImporters].[Sales].[OrderLines].[Description] IS NULL
-
-	-- 3. Продажи с названием месяца, в котором была продажа, номером квартала, к которому относится продажа, включите также к какой трети года относится дата - каждая треть по 4 месяца, дата забора заказа должна быть задана, 
-	--с ценой товара более 100$ либо количество единиц товара более 20. Добавьте вариант этого запроса с постраничной выборкой пропустив первую 1000 и отобразив следующие 100 записей. Соритровка должна быть по номеру квартала, трети года, дате продажи. 
-
-
-	--4. Заказы поставщикам, которые были исполнены за 2014й год с доставкой Road Freight или Post, добавьте название поставщика, имя контактного лица принимавшего заказ
-	     	 
-SELECT DISTINCT
-	  [WideWorldImporters].[Purchasing].[PurchaseOrders].SupplierReference,
-	  [WideWorldImporters].[Purchasing].[Suppliers].SupplierName,
-	  [Application].[People].[FullName]
-	 
-
-  FROM [WideWorldImporters].[Purchasing].[PurchaseOrders]
-  JOIN [WideWorldImporters].[Application].[DeliveryMethods]
-  ON [WideWorldImporters].[Purchasing].[PurchaseOrders].DeliveryMethodID = [WideWorldImporters].[Application].[DeliveryMethods].DeliveryMethodID
-
-  JOIN [WideWorldImporters].[Purchasing].[Suppliers]
-  ON [WideWorldImporters].[Purchasing].[Suppliers].DeliveryMethodID = [WideWorldImporters].[Application].[DeliveryMethods].DeliveryMethodID
-
-  JOIN [Application].[People]
-  ON [Application].[People].PersonID = [WideWorldImporters].[Purchasing].[PurchaseOrders].ContactPersonID
-
+	  [FullName] 
+  FROM [WideWorldImporters].[Purchasing].[PurchaseOrders] A
+  JOIN [WideWorldImporters].[Application].[DeliveryMethods] B	ON A.DeliveryMethodID = B.DeliveryMethodID
+  JOIN [WideWorldImporters].[Purchasing].[Suppliers] C			ON B.DeliveryMethodID = C.DeliveryMethodID
+  JOIN [WideWorldImporters].[Application].[People] D			ON D.PersonID = A.ContactPersonID
   WHERE [OrderDate] BETWEEN '2014-01-01' AND '2014-12-31'
-  AND (([WideWorldImporters].[Application].[DeliveryMethods].DeliveryMethodName = 'Road Freight') OR ([WideWorldImporters].[Application].[DeliveryMethods].DeliveryMethodName = 'Post'))
-
+  AND B.DeliveryMethodName IN ('Road Freight','Post');
    
-	--5. 10 последних по дате продаж с именем клиента и именем сотрудника, который оформил заказ.
-	  SELECT top 10 
-	 orderdate, CustomerName, FullName
-	FROM [WideWorldImporters].[Sales].[Orders]
-  JOIN [WideWorldImporters].[Sales].[Customers]
-  ON [WideWorldImporters].[Sales].[Orders].CustomerID = [WideWorldImporters].[Sales].[Customers].CustomerID
-
-  JOIN [WideWorldImporters].[Application].[People]
-  ON [WideWorldImporters].[Sales].[Orders].ContactPersonID = [WideWorldImporters].[Application].[People].PersonID
-  
-  order by orderdate desc
+--5. 
+	SELECT top 10 
+	orderdate, 
+	CustomerName, 
+	FullName
+	FROM [WideWorldImporters].[Sales].[Orders] A
+	JOIN [WideWorldImporters].[Sales].[Customers] B		ON A.CustomerID = B.CustomerID
+	JOIN [WideWorldImporters].[Application].[People] C	ON A.ContactPersonID = C.PersonID
+	ORDER BY orderdate DESC;
     
 
-	--6. Все ид и имена клиентов и их контактные телефоны, которые покупали товар Chocolate frogs 250g
-	  
-	  select distinct
-	   a.[CustomerID],
-	  a.[CustomerName],
-	  a.[PhoneNumber]
-
-  FROM [WideWorldImporters].[Sales].[Customers_Archive] a
-  join [WideWorldImporters].[Sales].[CustomerTransactions] b
-  on a.[CustomerID] = b.[CustomerID]
-
-  join [WideWorldImporters].[Sales].[InvoiceLines] c
-  on b.[InvoiceID] = c.[InvoiceID]
-  where c.[Description] like '%Chocolate frogs 250g%'
-  order by a.[CustomerID]
+--6. 
+	 
+	SELECT A.[CustomerID]
+      ,A.[CustomerName]
+      ,A.[PhoneNumber]
+  FROM [WideWorldImporters].[Sales].[Customers] A
+  JOIN [WideWorldImporters].[Sales].[Orders] B		ON A.CustomerID = B.CustomerID
+  WHERE B.OrderID IN (SELECT OrderID FROM [WideWorldImporters].[Sales].[OrderLines] 
+						WHERE Description = 'Chocolate frogs 250g');
