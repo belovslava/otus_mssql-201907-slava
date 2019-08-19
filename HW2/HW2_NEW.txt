@@ -1,7 +1,4 @@
-
-
---ÄÎÌÀØÍÅÅ ÇÀÄÀÍÈÅ ÓÐÎÊÀ ¹2 
-
+use [WideWorldImporters]
 --1. 
 SELECT 
 	[StockItemName]  
@@ -13,9 +10,9 @@ SELECT
 	SELECT 
 	[SupplierName],
 	[Description]
-	FROM [WideWorldImporters].[Purchasing].[Suppliers] a
-    LEFT JOIN [WideWorldImporters].[Warehouse].[StockItems] b ON a.[SupplierID]  = b.[SupplierID]
-	LEFT JOIN [WideWorldImporters].[Sales].[OrderLines] c ON b.[StockItemID] = c.[StockItemID]
+	FROM [Purchasing].[Suppliers] a
+    LEFT JOIN [Warehouse].[StockItems] b ON a.[SupplierID]  = b.[SupplierID]
+	LEFT JOIN [Sales].[OrderLines] c ON b.[StockItemID] = c.[StockItemID]
 	WHERE c.[Description] IS NULL
 	ORDER BY [SupplierName];
 
@@ -25,7 +22,7 @@ SELECT
 	  DATENAME(MONTH, ([InvoiceDate])) as MOTHS,
 	  DATEPART (QUARTER, ([InvoiceDate])) AS KVARTAL,
 	  (MONTH ([InvoiceDate] -1)/4+1) AS TRET
-	FROM [WideWorldImporters].[Sales].[Invoices] INV
+	FROM [Sales].[Invoices] INV
 	LEFT JOIN [WideWorldImporters].[Sales].[OrderLines] ORL	ON INV.OrderID = ORL.OrderID
 	WHERE UnitPrice > 100 OR Quantity > 20
 	ORDER BY DATENAME(MONTH, ([InvoiceDate])), DATEPART (QUARTER, ([InvoiceDate])), (MONTH ([InvoiceDate] -1)/4+1)
@@ -36,10 +33,10 @@ SELECT
 	  A.[SupplierReference],
 	  [SupplierName],
 	  [FullName] 
-  FROM [WideWorldImporters].[Purchasing].[PurchaseOrders] A
-  JOIN [WideWorldImporters].[Application].[DeliveryMethods] B ON A.DeliveryMethodID = B.DeliveryMethodID
-  JOIN [WideWorldImporters].[Purchasing].[Suppliers] C ON B.DeliveryMethodID = C.DeliveryMethodID
-  JOIN [WideWorldImporters].[Application].[People] DON D.PersonID = A.ContactPersonID
+  FROM [Purchasing].[PurchaseOrders] A
+  JOIN [Application].[DeliveryMethods] B ON A.DeliveryMethodID = B.DeliveryMethodID
+  JOIN [Purchasing].[Suppliers] C ON B.DeliveryMethodID = C.DeliveryMethodID
+  JOIN [Application].[People] D ON D.PersonID = A.ContactPersonID
   WHERE [OrderDate] BETWEEN '2014-01-01' AND '2014-12-31'
   AND B.DeliveryMethodName IN ('Road Freight','Post')
    
@@ -48,19 +45,7 @@ SELECT
 	orderdate, 
 	CustomerName, 
 	FullName
-	FROM [WideWorldImporters].[Sales].[Orders] A
-	JOIN [WideWorldImporters].[Sales].[Customers] B		ON A.CustomerID = B.CustomerID
-	JOIN [WideWorldImporters].[Application].[People] C	ON A.ContactPersonID = C.PersonID
+	FROM [Sales].[Orders] A
+	JOIN [Sales].[Customers] B		ON A.CustomerID = B.CustomerID
+	JOIN [Application].[People] C	ON A.ContactPersonID = C.PersonID
 	ORDER BY orderdate DESC;
-    
-	 
-	--6.
-	 
-SELECT 
-	   A.[CustomerID]
-      ,A.[CustomerName]
-      ,A.[PhoneNumber]
-  FROM [WideWorldImporters].[Sales].[Customers] A
-  JOIN [WideWorldImporters].[Sales].[Orders] B ON A.CustomerID = B.CustomerID
-  WHERE B.OrderID IN (SELECT OrderID FROM [WideWorldImporters].[Sales].[OrderLines] 
-						WHERE Description = 'Chocolate frogs 250g');
