@@ -1,3 +1,6 @@
+
+
+--ÄÎÌÀØÍÅÅ ÇÀÄÀÍÈÅ ÓÐÎÊÀ ¹2 
 use [WideWorldImporters]
 --1. 
 SELECT 
@@ -21,11 +24,20 @@ SELECT
       [InvoiceDate],
 	  DATENAME(MONTH, ([InvoiceDate])) as MOTHS,
 	  DATEPART (QUARTER, ([InvoiceDate])) AS KVARTAL,
-	  (MONTH ([InvoiceDate] -1)/4+1) AS TRET
+	   CASE
+			WHEN MONTH ([InvoiceDate]) between 1 and 4  THEN '1'
+			WHEN MONTH ([InvoiceDate])between 5 and 8  THEN '2'
+			WHEN MONTH ([InvoiceDate]) between 9 and 12 THEN '3'
+		END AS KVARTAL
 	FROM [Sales].[Invoices] INV
-	LEFT JOIN [WideWorldImporters].[Sales].[OrderLines] ORL	ON INV.OrderID = ORL.OrderID
+	LEFT JOIN [Sales].[OrderLines] ORL	ON INV.OrderID = ORL.OrderID
 	WHERE UnitPrice > 100 OR Quantity > 20
-	ORDER BY DATENAME(MONTH, ([InvoiceDate])), DATEPART (QUARTER, ([InvoiceDate])), (MONTH ([InvoiceDate] -1)/4+1)
+	ORDER BY DATENAME(MONTH, ([InvoiceDate])) ,DATEPART (QUARTER, ([InvoiceDate])),
+	 CASE
+			WHEN MONTH ([InvoiceDate]) between 1 and 4  THEN '1'
+			WHEN MONTH ([InvoiceDate])between 5 and 8  THEN '2'
+			WHEN MONTH ([InvoiceDate]) between 9 and 12 THEN '3'
+		END
 	OFFSET 1000 ROWS FETCH FIRST 100 ROWS ONLY;
 	
 	--4.   	 
@@ -49,3 +61,15 @@ SELECT
 	JOIN [Sales].[Customers] B		ON A.CustomerID = B.CustomerID
 	JOIN [Application].[People] C	ON A.ContactPersonID = C.PersonID
 	ORDER BY orderdate DESC;
+    
+	 
+	--6.
+	 
+SELECT 
+ A.[CustomerID]
+,A.[CustomerName]
+,A.[PhoneNumber]
+  FROM [WideWorldImporters].[Sales].[Customers] A
+  JOIN [WideWorldImporters].[Sales].[Orders] B ON A.CustomerID = B.CustomerID
+  WHERE B.OrderID IN (SELECT OrderID FROM [WideWorldImporters].[Sales].[OrderLines] 
+						WHERE Description = 'Chocolate frogs 250g');
