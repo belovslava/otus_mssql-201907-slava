@@ -1,0 +1,81 @@
+
+
+-- HW № 3
+
+use [WideWorldImporters]
+--1. Выберите сотрудников, которые являются продажниками, и еще не сделали ни одной продажи.
+--VERSIA № 1
+SELECT 
+	   [PersonID]
+      ,[FullName]
+  FROM [Application].[People] AS A
+  WHERE A.PersonID NOT IN (SELECT DISTINCT [ContactPersonID] FROM [Sales].[Invoices])
+  
+  --VERSIA № 2
+WITH A AS (SELECT DISTINCT [ContactPersonID] FROM [Sales].[Invoices])
+SELECT 
+	   [PersonID]
+      ,[FullName]
+  FROM [Application].[People] AS B
+  WHERE B.PersonID NOT IN (SELECT * FROM A)
+
+   --2. Выберите товары с минимальной ценой (подзапросом), 2 варианта подзапроса.  
+--VERSIA № 1
+	SELECT 
+	[StockItemName],
+	MIN ([UnitPrice]) AS MIN_PRICE
+	FROM [Warehouse].[StockItems] AS MinPrice
+	GROUP BY [StockItemName]
+	ORDER BY MIN ([UnitPrice]);
+--VERSIA № 2
+	SELECT 
+	[StockItemName],
+	[UnitPrice]
+	FROM [Warehouse].[StockItems]
+	WHERE [StockItemName] IN (SELECT TOP 3 [StockItemName]
+	FROM [Warehouse].[StockItems] 
+	GROUP BY [StockItemName]
+	ORDER BY MIN ([UnitPrice]));
+	   
+--3. Выберите информацию по клиентам, которые перевели компании 5 максимальных платежей из [Sales].[CustomerTransactions] 
+--представьте 3 способа (в том числе с CTE)
+
+--VERSIA № 1
+  SELECT TOP 5
+   People.[FullName]
+  ,Trans.[TransactionAmount]
+  FROM  [Sales].[CustomerTransactions] Trans
+  JOIN [Application].[People] People ON Trans.CustomerID = People.PersonID
+  ORDER BY Trans.[TransactionAmount] DESC;
+
+  --VERSIA № 2
+    WITH TMP (CustomerID, [TransactionAmount]) AS 
+	(SELECT TOP 5 (CustomerID), [TransactionAmount] FROM [Sales].[CustomerTransactions] 
+				ORDER BY [TransactionAmount] DESC)	
+	SELECT 
+	P.PersonId 
+	,P.[FullName]
+	,T.[TransactionAmount]
+	FROM [Application].[People] AS P
+	JOIN TMP AS T ON P.PersonID = T.CustomerID
+	
+
+ --VERSIA № 3
+SELECT 
+	PersonId, 
+	FullName, 
+		(SELECT 
+			COUNT(InvoiceId) AS SalesCount
+		FROM Sales.Invoices
+		WHERE Invoices.SalespersonPersonID = People.PersonID
+		) AS TotalSalesCount
+FROM Application.People
+WHERE IsSalesperson = 1;
+
+
+  --4.Выберите города (ид и название), в которые были доставлены товары, входящие в тройку самых дорогих товаров, а также Имя сотрудника, 
+  --который осуществлял упаковку заказов
+
+
+
+
