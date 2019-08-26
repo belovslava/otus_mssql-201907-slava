@@ -1,17 +1,17 @@
+Ôªø
 
-
--- HW π 3
+-- HW ‚Ññ 3
 
 use [WideWorldImporters]
---1. ¬˚·ÂËÚÂ ÒÓÚÛ‰ÌËÍÓ‚, ÍÓÚÓ˚Â ˇ‚Îˇ˛ÚÒˇ ÔÓ‰‡ÊÌËÍ‡ÏË, Ë Â˘Â ÌÂ Ò‰ÂÎ‡ÎË ÌË Ó‰ÌÓÈ ÔÓ‰‡ÊË.
---VERSIA π 1
+--1. –í—ã–±–µ—Ä–∏—Ç–µ —Å–æ—Ç—Ä—É–¥–Ω–∏–∫–æ–≤, –∫–æ—Ç–æ—Ä—ã–µ —è–≤–ª—è—é—Ç—Å—è –ø—Ä–æ–¥–∞–∂–Ω–∏–∫–∞–º–∏, –∏ –µ—â–µ –Ω–µ —Å–¥–µ–ª–∞–ª–∏ –Ω–∏ –æ–¥–Ω–æ–π –ø—Ä–æ–¥–∞–∂–∏.
+--VERSIA ‚Ññ 1
 SELECT 
 	   [PersonID]
       ,[FullName]
   FROM [Application].[People] AS A
   WHERE A.PersonID NOT IN (SELECT DISTINCT [ContactPersonID] FROM [Sales].[Invoices])
   
-  --VERSIA π 2
+  --VERSIA ‚Ññ 2
 WITH A AS (SELECT DISTINCT [ContactPersonID] FROM [Sales].[Invoices])
 SELECT 
 	   [PersonID]
@@ -19,15 +19,15 @@ SELECT
   FROM [Application].[People] AS B
   WHERE B.PersonID NOT IN (SELECT * FROM A)
 
-   --2. ¬˚·ÂËÚÂ ÚÓ‚‡˚ Ò ÏËÌËÏ‡Î¸ÌÓÈ ˆÂÌÓÈ (ÔÓ‰Á‡ÔÓÒÓÏ), 2 ‚‡Ë‡ÌÚ‡ ÔÓ‰Á‡ÔÓÒ‡.  
---VERSIA π 1
+   --2. –í—ã–±–µ—Ä–∏—Ç–µ —Ç–æ–≤–∞—Ä—ã —Å –º–∏–Ω–∏–º–∞–ª—å–Ω–æ–π —Ü–µ–Ω–æ–π (–ø–æ–¥–∑–∞–ø—Ä–æ—Å–æ–º), 2 –≤–∞—Ä–∏–∞–Ω—Ç–∞ –ø–æ–¥–∑–∞–ø—Ä–æ—Å–∞.  
+--VERSIA ‚Ññ 1
 	SELECT 
 	[StockItemName],
 	MIN ([UnitPrice]) AS MIN_PRICE
 	FROM [Warehouse].[StockItems] AS MinPrice
 	GROUP BY [StockItemName]
 	ORDER BY MIN ([UnitPrice]);
---VERSIA π 2
+--VERSIA ‚Ññ 2
 	SELECT 
 	[StockItemName],
 	[UnitPrice]
@@ -37,10 +37,10 @@ SELECT
 	GROUP BY [StockItemName]
 	ORDER BY MIN ([UnitPrice]));
 	   
---3. ¬˚·ÂËÚÂ ËÌÙÓÏ‡ˆË˛ ÔÓ ÍÎËÂÌÚ‡Ï, ÍÓÚÓ˚Â ÔÂÂ‚ÂÎË ÍÓÏÔ‡ÌËË 5 Ï‡ÍÒËÏ‡Î¸Ì˚ı ÔÎ‡ÚÂÊÂÈ ËÁ [Sales].[CustomerTransactions] 
---ÔÂ‰ÒÚ‡‚¸ÚÂ 3 ÒÔÓÒÓ·‡ (‚ ÚÓÏ ˜ËÒÎÂ Ò CTE)
+--3. –í—ã–±–µ—Ä–∏—Ç–µ –∏–Ω—Ñ–æ—Ä–º–∞—Ü–∏—é –ø–æ –∫–ª–∏–µ–Ω—Ç–∞–º, –∫–æ—Ç–æ—Ä—ã–µ –ø–µ—Ä–µ–≤–µ–ª–∏ –∫–æ–º–ø–∞–Ω–∏–∏ 5 –º–∞–∫—Å–∏–º–∞–ª—å–Ω—ã—Ö –ø–ª–∞—Ç–µ–∂–µ–π –∏–∑ [Sales].[CustomerTransactions] 
+--–ø—Ä–µ–¥—Å—Ç–∞–≤—å—Ç–µ 3 —Å–ø–æ—Å–æ–±–∞ (–≤ —Ç–æ–º —á–∏—Å–ª–µ —Å CTE)
 
---VERSIA π 1
+--VERSIA ‚Ññ 1
   SELECT TOP 5
    People.[FullName]
   ,Trans.[TransactionAmount]
@@ -48,7 +48,7 @@ SELECT
   JOIN [Application].[People] People ON Trans.CustomerID = People.PersonID
   ORDER BY Trans.[TransactionAmount] DESC;
 
-  --VERSIA π 2
+  --VERSIA ‚Ññ 2
     WITH TMP (CustomerID, [TransactionAmount]) AS 
 	(SELECT TOP 5 (CustomerID), [TransactionAmount] FROM [Sales].[CustomerTransactions] 
 				ORDER BY [TransactionAmount] DESC)	
@@ -60,7 +60,7 @@ SELECT
 	JOIN TMP AS T ON P.PersonID = T.CustomerID
 	
 
- --VERSIA π 3
+ --VERSIA ‚Ññ 3
 SELECT 
 	PersonId, 
 	FullName, 
@@ -73,9 +73,36 @@ FROM Application.People
 WHERE IsSalesperson = 1;
 
 
-  --4.¬˚·ÂËÚÂ „ÓÓ‰‡ (Ë‰ Ë Ì‡Á‚‡ÌËÂ), ‚ ÍÓÚÓ˚Â ·˚ÎË ‰ÓÒÚ‡‚ÎÂÌ˚ ÚÓ‚‡˚, ‚ıÓ‰ˇ˘ËÂ ‚ ÚÓÈÍÛ Ò‡Ï˚ı ‰ÓÓ„Ëı ÚÓ‚‡Ó‚, ‡ Ú‡ÍÊÂ »Ïˇ ÒÓÚÛ‰ÌËÍ‡, 
-  --ÍÓÚÓ˚È ÓÒÛ˘ÂÒÚ‚ÎˇÎ ÛÔ‡ÍÓ‚ÍÛ Á‡Í‡ÁÓ‚
+  --4.–í—ã–±–µ—Ä–∏—Ç–µ –≥–æ—Ä–æ–¥–∞ (–∏–¥ –∏ –Ω–∞–∑–≤–∞–Ω–∏–µ), –≤ –∫–æ—Ç–æ—Ä—ã–µ –±—ã–ª–∏ –¥–æ—Å—Ç–∞–≤–ª–µ–Ω—ã —Ç–æ–≤–∞—Ä—ã, –≤—Ö–æ–¥—è—â–∏–µ –≤ —Ç—Ä–æ–π–∫—É —Å–∞–º—ã—Ö –¥–æ—Ä–æ–≥–∏—Ö —Ç–æ–≤–∞—Ä–æ–≤, –∞ —Ç–∞–∫–∂–µ –ò–º—è —Å–æ—Ç—Ä—É–¥–Ω–∏–∫–∞, 
+  --–∫–æ—Ç–æ—Ä—ã–π –æ—Å—É—â–µ—Å—Ç–≤–ª—è–ª —É–ø–∞–∫–æ–≤–∫—É –∑–∞–∫–∞–∑–æ–≤
+ 
+ --–±–æ–ª—å—à–∏–µ —Ç—Ä—É–¥–Ω–æ—Å—Ç–∏ —Å —Ä–µ—à–µ–Ω–∏–µ–º —ç—Ç–æ–≥–æ –∑–∞–¥–∞–Ω–∏—è
 
+--5. –û–±—ä—è—Å–Ω–∏—Ç–µ, —á—Ç–æ –¥–µ–ª–∞–µ—Ç –∏ –æ–ø—Ç–∏–º–∏–∑–∏—Ä—É–π—Ç–µ –∑–∞–ø—Ä–æ—Å:
+SELECT 
+Invoices.InvoiceID, 
+Invoices.InvoiceDate,
+(SELECT People.FullName
+FROM Application.People
+WHERE People.PersonID = Invoices.SalespersonPersonID
+) AS SalesPersonName,
+SalesTotals.TotalSumm AS TotalSummByInvoice, 
+(SELECT SUM(OrderLines.PickedQuantity*OrderLines.UnitPrice)
+FROM Sales.OrderLines
+WHERE OrderLines.OrderId = (SELECT Orders.OrderId 
+FROM Sales.Orders
+WHERE Orders.PickingCompletedWhen IS NOT NULL	
+AND Orders.OrderId = Invoices.OrderId)	
+) AS TotalSummForPickedItems
+FROM Sales.Invoices 
+JOIN
+(SELECT InvoiceId, SUM(Quantity*UnitPrice) AS TotalSumm
+FROM Sales.InvoiceLines
+GROUP BY InvoiceId
+HAVING SUM(Quantity*UnitPrice) > 27000) AS SalesTotals
+ON Invoices.InvoiceID = SalesTotals.InvoiceID
+ORDER BY TotalSumm DESC
 
-
+--–ó–∞–ø—Ä–æ—Å –≤—ã—Ç–∞—â–∏—Ç –¥–∞—Ç—É –ø—Ä–æ–¥–∞–∂–∏, ID –∑–∞–∫–∞–∑–∞, –§–ò–û –ø—Ä–æ–¥–∞–≤—Ü–∞ —Å—É–º–º–∞ –ø—Ä–æ–¥–∞–∂ –∫–æ—Ç–æ—Ä—ã—Ö –ø—Ä–µ–≤—ã—Å–∏–ª–∞ 27 —Ç—ã—Å. —É.–µ. –°—á–∏—Ç–∞—é, —á—Ç–æ –¥–ª—è –æ–ø—Ç–∏–º–∏–∑–∞—Ü–∏–∏ –∑–∞–ø—Ä–æ—Å–∞ –Ω–µ–æ–±—Ö–æ–¥–∏–º–æ —É–π—Ç–∏ –æ –º–Ω–æ–∂–µ—Å—Ç–≤–∞ –ø–æ–¥–∑–∞–ø—Ä–æ—Å–æ–≤
+--–ø—É—Ç–µ–º –≤–≤–æ–¥–∞ join –∏ –≤—ã–Ω–æ—Å –Ω–µ–∫–æ—Ç–æ—Ä—ã—Ö –ø–æ–¥–∑–∞–ø—Ä–æ—Å–æ–≤ –≤ –∫–æ–Ω—Å—Ç—Ä—É–∫—Ü–∏–∏ with
 
