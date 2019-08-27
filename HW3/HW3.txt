@@ -76,8 +76,19 @@ WHERE IsSalesperson = 1;
   --4.Выберите города (ид и название), в которые были доставлены товары, входящие в тройку самых дорогих товаров, а также Имя сотрудника, 
   --который осуществлял упаковку заказов
  
- --большие трудности с решением этого задания
+ select distinct
+cit.CityID, 
+cit.CityName, 
+p.FullName,
+il.UnitPrice 
+from [Sales].[Invoices] si
+left join [Sales].[InvoiceLines] il on si.InvoiceID = il.InvoiceID
+left join [Application].[People] p on PackedByPersonID = p.PersonID
+left join [Sales].[Customers] cus on si.CustomerID = cus.CustomerID
+left join [Application].[Cities] cit on cit.CityID = cus.DeliveryCityID
+where il.UnitPrice in (select top (3) UnitPrice from [Warehouse].[StockItems] order by UnitPrice desc)
 
+ 
 --5. Объясните, что делает и оптимизируйте запрос:
 SELECT 
 Invoices.InvoiceID, 
@@ -103,6 +114,7 @@ HAVING SUM(Quantity*UnitPrice) > 27000) AS SalesTotals
 ON Invoices.InvoiceID = SalesTotals.InvoiceID
 ORDER BY TotalSumm DESC
 
---Запрос вытащит дату продажи, ID заказа, ФИО продавца сумма продаж которых превысила 27 тыс. у.е. Считаю, что для оптимизации запроса необходимо уйти о множества подзапросов
---путем ввода join и вынос некоторых подзапросов в конструкции with
+--Запрос вытащит дату продажи, ID заказа, ФИО продавца сумма продаж которых превысила 27 тыс. у.е.
+--Считаю, что для оптимизации запроса и упрощения чтения запроса необходимо уйти от множества подзапросов путем ввода временных таблиц (into # либо @)
+
 
