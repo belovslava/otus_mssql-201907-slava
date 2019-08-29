@@ -1,10 +1,10 @@
-п»ї
 
--- HW в„– 3
+
+-- HW № 3
 use [WideWorldImporters]
 
---1. Р’С‹Р±РµСЂРёС‚Рµ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ, РєРѕС‚РѕСЂС‹Рµ СЏРІР»СЏСЋС‚СЃСЏ РїСЂРѕРґР°Р¶РЅРёРєР°РјРё, Рё РµС‰Рµ РЅРµ СЃРґРµР»Р°Р»Рё РЅРё РѕРґРЅРѕР№ РїСЂРѕРґР°Р¶Рё.
---VERSIA в„– 1
+--1. Выберите сотрудников, которые являются продажниками, и еще не сделали ни одной продажи.
+--VERSIA № 1
 select  
 	   [PersonID]
       ,[FullName]
@@ -13,7 +13,7 @@ select
  where [IsSalesperson] NOT IN (select distinct [SalespersonPersonID] from [Sales].[Invoices])
  and [IsSalesperson] = 1;
   
-  --VERSIA в„– 2
+  --VERSIA № 2
 with A as (select distinct [SalespersonPersonID] from [Sales].[Invoices])
 select 
 	   [PersonID]
@@ -23,31 +23,31 @@ select
   where B.[IsSalesperson]  NOT IN (select * from A)
   and  [IsSalesperson] = 1;
   
-   --2. Р’С‹Р±РµСЂРёС‚Рµ С‚РѕРІР°СЂС‹ СЃ РјРёРЅРёРјР°Р»СЊРЅРѕР№ С†РµРЅРѕР№ (РїРѕРґР·Р°РїСЂРѕСЃРѕРј), 2 РІР°СЂРёР°РЅС‚Р° РїРѕРґР·Р°РїСЂРѕСЃР°.  
---VERSIA в„– 1
+   --2. Выберите товары с минимальной ценой (подзапросом), 2 варианта подзапроса.  
+--VERSIA № 1
 	select 
 	[StockItemName]
 	from [Warehouse].[StockItems] 
 	where [UnitPrice] in (select min ([UnitPrice]) from [Warehouse].[StockItems])
 
---VERSIA в„– 2
+--VERSIA № 2
 	select 
 		[StockItemName]
 	from [Warehouse].[StockItems] t2
 	group by [StockItemName]
 	having min ([UnitPrice])  = (select  min ([UnitPrice]) from [Warehouse].[StockItems])
 	
---3. Р’С‹Р±РµСЂРёС‚Рµ РёРЅС„РѕСЂРјР°С†РёСЋ РїРѕ РєР»РёРµРЅС‚Р°Рј, РєРѕС‚РѕСЂС‹Рµ РїРµСЂРµРІРµР»Рё РєРѕРјРїР°РЅРёРё 5 РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РїР»Р°С‚РµР¶РµР№ РёР· [Sales].[CustomerTransactions] 
---РїСЂРµРґСЃС‚Р°РІСЊС‚Рµ 3 СЃРїРѕСЃРѕР±Р° (РІ С‚РѕРј С‡РёСЃР»Рµ СЃ CTE)
+--3. Выберите информацию по клиентам, которые перевели компании 5 максимальных платежей из [Sales].[CustomerTransactions] 
+--представьте 3 способа (в том числе с CTE)
 
---VERSIA в„– 1
+--VERSIA № 1
  select distinct
 	c.CustomerID, 
 	c.CustomerName
 from [Sales].[Customers] c
 where c.CustomerID in (select top (5) CustomerID from [Sales].[CustomerTransactions] order by [TransactionAmount] desc)
 
---VERSIA в„– 2
+--VERSIA № 2
   select distinct
 	c.CustomerID, 
 	c.CustomerName
@@ -55,7 +55,7 @@ where c.CustomerID in (select top (5) CustomerID from [Sales].[CustomerTransacti
   join [Sales].[Customers] c on c.CustomerID  = ct.CustomerID 
   where [TransactionAmount] in (select top (5) [TransactionAmount] from [Sales].[CustomerTransactions] order by [TransactionAmount] desc);
    
-  --VERSIA в„– 3
+  --VERSIA № 3
 with tmp (CustomerID) as
 (
 select top (5)
@@ -67,8 +67,8 @@ select c.CustomerID,c.CustomerName from [Sales].[Customers] c
 join tmp  on c.CustomerID = tmp.CustomerID
 
 
-  --4.Р’С‹Р±РµСЂРёС‚Рµ РіРѕСЂРѕРґР° (РёРґ Рё РЅР°Р·РІР°РЅРёРµ), РІ РєРѕС‚РѕСЂС‹Рµ Р±С‹Р»Рё РґРѕСЃС‚Р°РІР»РµРЅС‹ С‚РѕРІР°СЂС‹, РІС…РѕРґСЏС‰РёРµ РІ С‚СЂРѕР№РєСѓ СЃР°РјС‹С… РґРѕСЂРѕРіРёС… С‚РѕРІР°СЂРѕРІ, Р° С‚Р°РєР¶Рµ РРјСЏ СЃРѕС‚СЂСѓРґРЅРёРєР°, 
-  --РєРѕС‚РѕСЂС‹Р№ РѕСЃСѓС‰РµСЃС‚РІР»СЏР» СѓРїР°РєРѕРІРєСѓ Р·Р°РєР°Р·РѕРІ
+  --4.Выберите города (ид и название), в которые были доставлены товары, входящие в тройку самых дорогих товаров, а также Имя сотрудника, 
+  --который осуществлял упаковку заказов
  
  select distinct
 	cit.CityID, 
@@ -83,7 +83,7 @@ from [Sales].[Invoices] si
 where il.UnitPrice in (select top (3) UnitPrice from [Warehouse].[StockItems] order by UnitPrice desc)
 
  
---5. РћР±СЉСЏСЃРЅРёС‚Рµ, С‡С‚Рѕ РґРµР»Р°РµС‚ Рё РѕРїС‚РёРјРёР·РёСЂСѓР№С‚Рµ Р·Р°РїСЂРѕСЃ:
+--5. Объясните, что делает и оптимизируйте запрос:
 SELECT 
 Invoices.InvoiceID, 
 Invoices.InvoiceDate,
@@ -108,7 +108,7 @@ HAVING SUM(Quantity*UnitPrice) > 27000) AS SalesTotals
 ON Invoices.InvoiceID = SalesTotals.InvoiceID
 ORDER BY TotalSumm DESC
 
---Р—Р°РїСЂРѕСЃ РІС‹С‚Р°С‰РёС‚ РґР°С‚Сѓ РїСЂРѕРґР°Р¶Рё, ID Р·Р°РєР°Р·Р°, Р¤РРћ РїСЂРѕРґР°РІС†Р° СЃСѓРјРјР° РїСЂРѕРґР°Р¶ РєРѕС‚РѕСЂС‹С… РїСЂРµРІС‹СЃРёР»Р° 27 С‚С‹СЃ. Сѓ.Рµ.
---РЎС‡РёС‚Р°СЋ, С‡С‚Рѕ РґР»СЏ РѕРїС‚РёРјРёР·Р°С†РёРё Р·Р°РїСЂРѕСЃР° Рё СѓРїСЂРѕС‰РµРЅРёСЏ С‡С‚РµРЅРёСЏ Р·Р°РїСЂРѕСЃР° РЅРµРѕР±С…РѕРґРёРјРѕ СѓР№С‚Рё РѕС‚ РјРЅРѕР¶РµСЃС‚РІР° РїРѕРґР·Р°РїСЂРѕСЃРѕРІ РїСѓС‚РµРј РІРІРѕРґР° РІСЂРµРјРµРЅРЅС‹С… С‚Р°Р±Р»РёС† (into # Р»РёР±Рѕ @)
+--Запрос вытащит дату продажи, ID заказа, ФИО продавца сумма продаж которых превысила 27 тыс. у.е.
+--Считаю, что для оптимизации запроса и упрощения чтения запроса необходимо уйти от множества подзапросов путем ввода временных таблиц (into # либо @)
 
 
