@@ -1,0 +1,152 @@
+﻿--HW 6
+
+use [WideWorldImporters]
+
+--1. Довставлять в базу 5 записей используя insert в таблицу Customers или Suppliers
+INSERT INTO [Sales].[Customers]
+	([CustomerID]
+     ,[CustomerName]
+     ,[BillToCustomerID]
+     ,[CustomerCategoryID]
+     ,[PrimaryContactPersonID]
+	 ,[DeliveryMethodID]
+	 ,[DeliveryCityID]
+	 ,[PostalCityID]
+	 ,[AccountOpenedDate]
+	 ,[StandardDiscountPercentage]
+	 ,[IsStatementSent]
+	 ,[IsOnCreditHold]
+	 ,[PaymentDays]
+	 ,[PhoneNumber]
+	 ,[FaxNumber]
+	 ,[WebsiteURL]
+	 ,[DeliveryAddressLine1]
+	 ,[DeliveryPostalCode]
+	 ,[PostalAddressLine1]
+	 ,[PostalPostalCode]
+	 ,[LastEditedBy])
+VALUES (NEXT VALUE FOR Sequences.CustomerID, -- Customer Id
+	'EWQ KERRO' -- CustomerName
+	, 1 -- BillToCustomerId
+	, 4 -- CustomerCategoryId
+	, 1001 -- PrimaryContactPersonId
+	, 3 -- DeliveryMethodID
+	, 10 -- DeliveryCityId
+	, 10 -- PostalCityId
+	, '20190904' -- AccountOpenedDate
+	, 0.0 -- StandardDiscountPercentage
+	, 0 -- IsStatementSent
+	, 0 -- IsOnCreditHold
+	, 7 -- PaymentDays
+	, '(977) 555-70-70' -- PhoneNumber
+	, '(977) 555-70-70' -- FaxNumber
+	, 'http://slavaivanov.ru' -- WebsiteURL
+	, 'Shop 112' -- DeliveryAddressLine1
+	, 90002 -- DeliveryPostalCode
+	,' PO Box 101' -- PostalAddressLine1
+	, 90411 -- PostalPostalCode
+	, 22) -- LastEditedBy 
+
+	,(NEXT VALUE FOR Sequences.CustomerID, -- Customer Id
+	'DJON PETTER' -- CustomerName
+	, 1 -- BillToCustomerId
+	, 3 -- CustomerCategoryId
+	, 1010 -- PrimaryContactPersonId
+	, 3 -- DeliveryMethodID
+	, 11 -- DeliveryCityId
+	, 11 -- PostalCityId
+	, '20190905' -- AccountOpenedDate
+	, 0.0 -- StandardDiscountPercentage
+	, 0 -- IsStatementSent
+	, 0 -- IsOnCreditHold
+	, 5 -- PaymentDays
+	, '(977) 555-60-60' -- PhoneNumber
+	, '(977) 555-60-60' -- FaxNumber
+	, 'http://DJON.ru' -- WebsiteURL
+	, 'Shop 1000' -- DeliveryAddressLine1
+	, 94878 -- DeliveryPostalCode
+	,' PO Box 108' -- PostalAddressLine1
+	, 90488 -- PostalPostalCode
+	, 11) -- LastEditedBy
+
+	,(NEXT VALUE FOR Sequences.CustomerID, -- Customer Id
+	'PETR SEI' -- CustomerName
+	, 1 -- BillToCustomerId
+	, 3 -- CustomerCategoryId
+	, 1055 -- PrimaryContactPersonId
+	, 5 -- DeliveryMethodID
+	, 15 -- DeliveryCityId
+	, 15 -- PostalCityId
+	, '20190909' -- AccountOpenedDate
+	, 0.0 -- StandardDiscountPercentage
+	, 0 -- IsStatementSent
+	, 0 -- IsOnCreditHold
+	, 5 -- PaymentDays
+	, '(977) 555-55-55' -- PhoneNumber
+	, '(977) 555-55-55' -- FaxNumber
+	, 'http://PETRSEI.ru' -- WebsiteURL
+	, 'Shop 1555' -- DeliveryAddressLine1
+	, 94597 -- DeliveryPostalCode
+	,' PO Box 111' -- PostalAddressLine1
+	, 90665 -- PostalPostalCode
+	, 13) -- LastEditedBy
+	,(NEXT VALUE FOR Sequences.CustomerID, -- Customer Id
+	'POP GERY' -- CustomerName
+	, 1 -- BillToCustomerId
+	, 3 -- CustomerCategoryId
+	, 1055 -- PrimaryContactPersonId
+	, 5 -- DeliveryMethodID
+	, 15 -- DeliveryCityId
+	, 15 -- PostalCityId
+	, '20190909' -- AccountOpenedDate
+	, 0.0 -- StandardDiscountPercentage
+	, 0 -- IsStatementSent
+	, 0 -- IsOnCreditHold
+	, 5 -- PaymentDays
+	, '(977) 555-59-59' -- PhoneNumber
+	, '(977) 555-59-59' -- FaxNumber
+	, 'http://POPGERY.ru' -- WebsiteURL
+	, 'Shop 1558' -- DeliveryAddressLine1
+	, 948797 -- DeliveryPostalCode
+	,' PO Box 100' -- PostalAddressLine1
+	, 90666 -- PostalPostalCode
+	, 14) -- LastEditedBy
+	,(NEXT VALUE FOR Sequences.CustomerID, -- Customer Id
+	'YUL FORP' -- CustomerName
+	, 1 -- BillToCustomerId
+	, 5 -- CustomerCategoryId
+	, 1056 -- PrimaryContactPersonId
+	, 7 -- DeliveryMethodID
+	, 11 -- DeliveryCityId
+	, 11 -- PostalCityId
+	, '20190908' -- AccountOpenedDate
+	, 0.0 -- StandardDiscountPercentage
+	, 0 -- IsStatementSent
+	, 0 -- IsOnCreditHold
+	, 5 -- PaymentDays
+	, '(977) 555-56-57' -- PhoneNumber
+	, '(977) 555-56-57' -- FaxNumber
+	, 'http://YULFORP.ru' -- WebsiteURL
+	, 'Shop 1559' -- DeliveryAddressLine1
+	, 948798 -- DeliveryPostalCode
+	,' PO Box 105' -- PostalAddressLine1
+	, 90667 -- PostalPostalCode
+	, 17) -- LastEditedBy
+
+--2. удалите 1 запись из Customers, которая была вами добавлена
+DELETE FROM Sales.Customers WHERE [CustomerName] = 'YUL FORP'
+
+--3. изменить одну запись, из добавленных через UPDATE
+SELECT CustomerID FROM Sales.Customers
+WHERE CustomerName = 'POP GERY';
+
+UPDATE Sales.Customers SET CustomerName = 'YUL FORP'
+WHERE CustomerID = (1071);
+
+SELECT * FROM Sales.Customers
+WHERE CustomerName = 'YUL FORP'
+
+--4. Написать MERGE, который вставит вставит запись в клиенты, если ее там нет, и изменит если она уже есть
+--5. Напишите запрос, который выгрузит данные через bcp out и загрузить через bulk insert
+
+
