@@ -1,0 +1,17 @@
+﻿--1. Напишите запрос с временной таблицей и перепишите его с табличной переменной. Сравните планы.
+--В качестве запроса с временной таблицей и табличной переменной можно взять свой запрос или следующий запрос:
+--Сделать расчет суммы продаж нарастающим итогом по месяцам с 2015 года (в рамках одного месяца он будет одинаковый, нарастать будет в течение времени выборки)
+--Выведите id продажи, название клиента, дату продажи, сумму продажи, сумму нарастающим итогом
+
+--use WideWorldImporters
+
+select 
+inv.InvoiceID,
+cust.CustomerName,
+inv.InvoiceDate,
+SUM(il.Quantity * il.UnitPrice) OVER (PARTITION BY inv.InvoiceID) as sumprodaz, 
+SUM(il.Quantity * il.UnitPrice) OVER (ORDER BY DATEPART(YEAR, inv.InvoiceDate), DATEPART(MONTH, inv.InvoiceDate)) as sum_all
+FROM Sales.Invoices inv
+join Sales.Customers cust on inv.CustomerID = cust.CustomerID
+join Sales.InvoiceLines il on il.InvoiceID = inv.InvoiceID
+WHERE inv.InvoiceDate >= '2015-01-01' AND inv.InvoiceDate <= '2015-12-31';
