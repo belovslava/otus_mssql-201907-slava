@@ -1,0 +1,67 @@
+﻿
+
+
+
+--Создание таблиц и представлений для своего проекта.
+--Нужно используя операторы DDL создать:
+--1. 3-4 основные таблицы для своего проекта. 
+--2. Первичные и внешние ключи для всех созданных таблиц
+--3. 1-2 индекса на таблицы
+
+
+-- Проект включает в себя 3 таблицы (Сведения о клиентах, сведения по банковским картам клиентов, финансовые операции по картам) 
+CREATE DATABASE bank;
+GO
+
+use bank;
+GO
+--Создаем таблицу "Сведения о клиентах"
+CREATE TABLE client (
+	id 			int not null identity(1,1) primary key,
+	fio			varchar(50) not null,
+	birthday	date,
+	phone		varchar(50),
+	mail		varchar(50)
+	);
+
+--Создаем таблицу "Сведения о банковских картах клиента"
+CREATE TABLE bcard (
+	id 				int not null identity(1,1)  primary key,		
+	name_kard 		varchar(50)  not null,
+	number_card 	varchar(18)  not null,
+	acca_card		varchar(21)  not null,
+	date_open		date,
+	date_close		date,
+);
+--Создаем таблицу "Сведения об операциях по банковским картам"
+CREATE TABLE bcard_oper (
+	id 				int not null identity(1,1)  primary key,
+	id_client 		int not null,
+	id_bcard 		int not null,
+	dateoper		datetime,
+	sum_val			money,
+	details_oper	varchar(50),
+	cod_oper		varchar(10),
+);
+-- создаем справочник кодов операций (cod_oper) /пишем их расшифровку
+CREATE TABLE cod_oper (
+	id 				int not null identity(1,1)  primary key,
+	cod_oper		varchar(10) not null,
+	name_cod_oper	varchar(100) not null);
+	
+--- Редактирование: установление связи между таблицами bcard_oper  и client
+ALTER TABLE bcard_oper  ADD  CONSTRAINT FK_bcard_client FOREIGN KEY(id_client)
+REFERENCES client (id)
+ON UPDATE CASCADE
+ON DELETE CASCADE
+
+--- Редактирование: установление связи между таблицами bcard_oper и bcard
+ALTER TABLE bcard_oper  ADD  CONSTRAINT FK_bcard_client2 FOREIGN KEY(id_bcard)
+REFERENCES bcard (id)
+ON UPDATE CASCADE
+ON DELETE CASCADE	
+
+---- Создаем индекс
+create index idx_fio on client (fio);
+create index idx_number_card on bcard (number_card);
+
