@@ -1,0 +1,68 @@
+﻿use [WideWorldImporters]
+
+--1. Требуется написать запрос, который в результате своего выполнения формирует таблицу следующего вида:
+--Название клиента
+--МесяцГод Количество покупок
+
+--Клиентов взять с ID 2-6, это все подразделение Tailspin Toys
+--имя клиента нужно поменять так чтобы осталось только уточнение 
+--например исходное Tailspin Toys (Gasport, NY) - вы выводите в имени только Gasport,NY
+--дата должна иметь формат dd.mm.yyyy например 25.12.2019
+
+
+
+--2. Для всех клиентов с именем, в котором есть Tailspin Toys
+--вывести все адреса, которые есть в таблице, в одной колонке
+
+select 
+[CustomerName]+ '/'+ [AddressLine] as names
+from (
+	select [CustomerName], [PostalAddressLine1],[PostalAddressLine2]
+	from [Sales].[Customers]
+	where [CustomerName] like '%Tailspin Toys%') as s_cust
+
+unpivot ([AddressLine] for column_name in ([PostalAddressLine1],[PostalAddressLine2])) as npv
+order by [CustomerName];
+
+
+--3. В таблице стран есть поля с кодом страны цифровым и буквенным
+--сделайте выборку ИД страны, название, код - чтобы в поле был либо цифровой либо буквенный код
+
+select 
+[CountryID],[CountryName],CODE
+from (
+	select 
+	[CountryID],
+	[CountryName],
+	[IsoAlpha3Code], 
+	cast ([IsoNumericCode] as nvarchar (3)) as icode
+	from [Application].[Countries]) as ac
+unpivot (CODE for column_name in (IsoAlpha3Code,icode)) as npv;
+
+
+
+--4. Перепишите ДЗ из оконных функций через CROSS APPLY 
+--Выберите по каждому клиенту 2 самых дорогих товара, которые он покупал
+--В результатах должно быть ид клиета, его название, ид товара, цена, дата покупки
+
+select 
+scustomer.[CustomerID], 
+scustomer.[CustomerName], 
+sum_max.[InvoiceLineID],
+sum_max.[description],
+sum_max.sum_inv, 
+sum_max.invoicedate
+
+from [Sales].[Customers] as scustomer
+cross apply (
+	select top 2 
+	cust.[CustomerID],
+	[Quantity]*[UnitPrice] as sum_inv, 
+	description,
+	[InvoiceLineID],
+	invoicedate
+	from Sales.Customers as cust
+	join Sales.Invoices as inv on inv.CustomerID = cust.[CustomerID]
+	join [Sales].[InvoiceLines] as invline on inv.InvoiceID = invline.InvoiceID
+where cust.CustomerID = scustomer.CustomerID
+order by Quantity*[UnitPrice] desc) as sum_max ;
