@@ -1,0 +1,22 @@
+SELECT 
+    InvoiceMonth, 
+    [Sylvanite, MT], 
+    [Peeples Valley, AZ], 
+    [Medicine Lodge, KS], 
+    [Gasport, NY], 
+    [Jessie, ND]
+FROM
+    (     
+	SELECT 
+         c_4.InvoiceMonth, 
+         c_3.SpecName, 
+         Inv.InvoiceID
+     FROM Sales.Customers AS Cust
+     INNER JOIN Sales.Invoices AS Inv  ON Inv.CustomerID = Cust.CustomerID
+     CROSS APPLY (SELECT  FirstBracketPos = CHARINDEX('(', Cust.CustomerName) ) AS c_1
+     CROSS APPLY (SELECT  LastBracketPos = CHARINDEX(')', Cust.CustomerName, FirstBracketPos + 1) ) AS c_2
+     CROSS APPLY (SELECT SpecName = SUBSTRING(Cust.CustomerName, FirstBracketPos + 1, LastBracketPos - FirstBracketPos - 1) ) AS c_3
+     CROSS APPLY (SELECT InvoiceMonth = FORMAT(DATEADD(MM, DATEDIFF(MM, 0, Inv.InvoiceDate), 0), 'dd.MM.yyyy') ) AS c_4    
+	
+	WHERE Cust.CustomerID BETWEEN 2 AND 6 ) AS D 
+		PIVOT(COUNT(D.[InvoiceID]) FOR D.SpecName IN([Sylvanite, MT],[Peeples Valley, AZ],[Medicine Lodge, KS],[Gasport, NY], [Jessie, ND])) AS npv
