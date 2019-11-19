@@ -1,0 +1,69 @@
+﻿
+
+--HW 10
+
+use [WideWorldImporters]
+--1) Написать функцию возвращающую Клиента с наибольшей суммой покупки.
+DROP  FUNCTION CustomerId_max_summ;
+
+CREATE FUNCTION CustomerId_max_summ()
+RETURNS INT
+AS
+    BEGIN
+        DECLARE @CustometID INT;
+        WITH Orders_summa
+            AS (SELECT il.InvoiceID, 
+                         SUM(il.Quantity * ISNULL(il.UnitPrice, si.UnitPrice)) AS summa
+                FROM Sales.InvoiceLines il
+                    INNER JOIN Warehouse.StockItems si ON il.StockItemID = si.StockItemID
+                GROUP BY il.InvoiceID)
+            SELECT TOP 1 @CustometID = c.CustomerID
+            FROM Sales.Invoices i
+                INNER JOIN Orders_summa os ON i.InvoiceID = os.InvoiceID
+                INNER JOIN Sales.Customers c ON i.CustomerID = c.CustomerID
+            ORDER BY os.summa DESC;
+        RETURN @CustometID;
+    END;
+GO
+
+--2) Написать хранимую процедуру с входящим параметром СustomerID, выводящую сумму покупки по этому клиенту.
+--Использовать таблицы :
+--Sales.Customers
+--Sales.Invoices
+--Sales.InvoiceLines
+DROP PROCEDURE CLIENT_SUMM;
+
+CREATE PROCEDURE CLIENT_SUMM
+@CustomerID INT
+AS
+    BEGIN
+        SET NOCOUNT ON;
+        SELECT @CustomerId AS [CustomerId], 
+        (
+            SELECT SUM(il.Quantity * il.UnitPrice)
+            FROM Sales.InvoiceLines il
+                INNER JOIN Sales.Invoices i ON il.InvoiceID = i.InvoiceID
+            WHERE i.CustomerID = @CustomerID
+        ) AS [TotalAmount];
+    END;
+GO
+3) Создать одинаковую функцию и хранимую процедуру, посмотреть в чем разница в производительности и почему.
+
+CREATE FUNCTION CLIENT_SUMM_1
+ (@CustomerId INT)
+RETURNS MONEY
+AS
+    BEGIN
+        RETURN
+        (
+            SELECT SUM(il.Quantity * il.UnitPrice)
+            FROM Sales.InvoiceLines il
+                INNER JOIN Sales.Invoices i ON il.InvoiceID = i.InvoiceID
+            WHERE i.CustomerID = @CustomerID
+        );
+    END;
+GO
+--РАЗНИЦЫ ПО ВРЕМЕНИ ОТРАБОТКИ ПРОЦЕДУРЫ ИЗ ЗАДАНИЯ 2 И ФУНКЦИИ 3 НЕТ
+
+
+
