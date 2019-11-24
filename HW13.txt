@@ -1,11 +1,10 @@
-﻿
+
 
 --HW 10
 
 use [WideWorldImporters]
 --1) Написать функцию возвращающую Клиента с наибольшей суммой покупки.
 DROP  FUNCTION CustomerId_max_summ;
-
 CREATE FUNCTION CustomerId_max_summ()
 RETURNS INT
 AS
@@ -26,13 +25,14 @@ AS
     END;
 GO
 
+select dbo.CustomerId_max_summ ()
+
 --2) Написать хранимую процедуру с входящим параметром СustomerID, выводящую сумму покупки по этому клиенту.
 --Использовать таблицы :
 --Sales.Customers
 --Sales.Invoices
 --Sales.InvoiceLines
 DROP PROCEDURE CLIENT_SUMM;
-
 CREATE PROCEDURE CLIENT_SUMM
 @CustomerID INT
 AS
@@ -47,6 +47,9 @@ AS
         ) AS [TotalAmount];
     END;
 GO
+
+exec CLIENT_SUMM @CustomerID = 832
+
 3) Создать одинаковую функцию и хранимую процедуру, посмотреть в чем разница в производительности и почему.
 
 CREATE FUNCTION CLIENT_SUMM_1
@@ -63,7 +66,14 @@ AS
         );
     END;
 GO
+
+select dbo.CLIENT_SUMM_1 ('832')
+
+
 --РАЗНИЦЫ ПО ВРЕМЕНИ ОТРАБОТКИ ПРОЦЕДУРЫ ИЗ ЗАДАНИЯ 2 И ФУНКЦИИ 3 НЕТ
+
+--4) Создайте табличную функцию покажите как ее можно вызвать для каждой строки result set'а без использования цикла. 
+не понимаю в чем суть задания!
 
 
 
