@@ -52,8 +52,7 @@ exec CLIENT_SUMM @CustomerID = 832
 
 3) Создать одинаковую функцию и хранимую процедуру, посмотреть в чем разница в производительности и почему.
 
-CREATE FUNCTION CLIENT_SUMM_1
- (@CustomerId INT)
+CREATE FUNCTION CLIENT_SUMM_1 (@CustomerId INT)
 RETURNS MONEY
 AS
     BEGIN
@@ -73,7 +72,28 @@ select dbo.CLIENT_SUMM_1 ('832')
 --РАЗНИЦЫ ПО ВРЕМЕНИ ОТРАБОТКИ ПРОЦЕДУРЫ ИЗ ЗАДАНИЯ 2 И ФУНКЦИИ 3 НЕТ
 
 --4) Создайте табличную функцию покажите как ее можно вызвать для каждой строки result set'а без использования цикла. 
-не понимаю в чем суть задания!
+
+DROP FUNCTION SI_PersonId;
+
+CREATE FUNCTION SI_PersonId(@PersonId INT)
+RETURNS TABLE
+AS
+	RETURN(	
+		SELECT TOP 5 i.InvoiceID, il.[Description]
+		FROM Sales.Invoices i
+		INNER JOIN Sales.InvoiceLines il ON i.[InvoiceID] = il.[InvoiceID]
+		WHERE i.PackedByPersonID = @PersonId
+		
+	);
+GO
+
+SELECT p.PersonID, p.FullName, TopInv.InvoiceId, TopInv.Description
+FROM Application.People p
+CROSS APPLY (
+	SELECT ti.InvoiceId, ti.Description
+	FROM SI_PersonId(p.PersonId) ti
+) AS TopInv
+where [IsEmployee] = 1;
 
 
 
